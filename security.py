@@ -40,12 +40,27 @@ def verify_password(password, stored_hash):
 
 def meets_minimum_age(date_of_birth, minimum_age, *, today=None):
     today = today or date.today()
-    if not isinstance(date_of_birth, date) or date_of_birth > today or minimum_age < 0:
+    if minimum_age < 0:
         return False
+    age = _age_on(date_of_birth, today)
+    return age is not None and age >= minimum_age
+
+
+def is_under_age(date_of_birth, maximum_age, *, today=None):
+    today = today or date.today()
+    if maximum_age < 0:
+        return False
+    age = _age_on(date_of_birth, today)
+    return age is not None and age < maximum_age
+
+
+def _age_on(date_of_birth, today):
+    if not isinstance(date_of_birth, date) or date_of_birth > today:
+        return None
     age = today.year - date_of_birth.year
     if (today.month, today.day) < (date_of_birth.month, date_of_birth.day):
         age -= 1
-    return age >= minimum_age
+    return age
 
 
 def validate_roll_number(value):

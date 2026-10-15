@@ -63,6 +63,25 @@ class IdentityOCRTests(unittest.TestCase):
         )
         self.assertFalse(mismatch["name_matches"])
 
+    def test_admin_verification_accepts_applicants_who_are_23_or_older(self):
+        today = date.today()
+        age_23_dob = date(today.year - 23, 1, 1)
+        age_24_dob = date(today.year - 24, 1, 1)
+
+        age_23 = verify_document_text(
+            f"Alex Example\nDOB: {age_23_dob:%d/%m/%Y}",
+            "Alex Example",
+            age_23_dob,
+        )
+        age_24 = verify_document_text(
+            f"Alex Example\nDOB: {age_24_dob:%d/%m/%Y}",
+            "Alex Example",
+            age_24_dob,
+        )
+
+        self.assertTrue(age_23["meets_minimum_age"])
+        self.assertTrue(age_24["meets_minimum_age"])
+
     def test_ocr_uses_in_memory_stdin_and_does_not_create_image_file(self):
         image = io.BytesIO()
         Image.new("RGB", (12, 12), "white").save(image, format="PNG")

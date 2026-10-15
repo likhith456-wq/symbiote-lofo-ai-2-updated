@@ -19,6 +19,7 @@ from security import (
     create_qr_token,
     hash_password,
     hash_qr_token,
+    is_under_age,
     meets_minimum_age,
 )
 from uploads import build_qr_payload, make_qr_png, save_uploaded_image
@@ -290,8 +291,8 @@ def render_login_page():
                 st.warning("Complete all required fields.")
             elif not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email.strip()):
                 st.warning("Enter a valid email address.")
-            elif not meets_minimum_age(date_of_birth, 23):
-                st.error("You must be at least 23 years old to create an account.")
+            elif not is_under_age(date_of_birth, 23):
+                st.error("You must be under 23 years old to create a student account.")
             elif len(password) < 12:
                 st.warning("Use a password with at least 12 characters.")
             elif password != confirmation:
@@ -383,7 +384,7 @@ def render_login_page():
                         )
                     elif not identity_check["meets_minimum_age"]:
                         st.error(
-                            "The document date of birth does not meet the minimum age of 23."
+                            "The document date of birth must show that you are at least 23."
                         )
                     else:
                         try:

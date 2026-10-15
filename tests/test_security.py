@@ -7,6 +7,7 @@ from security import (
     create_qr_token,
     hash_password,
     hash_qr_token,
+    is_under_age,
     meets_minimum_age,
     validate_roll_number,
     verify_password,
@@ -50,6 +51,13 @@ class SecurityTests(unittest.TestCase):
         self.assertFalse(meets_minimum_age(date(2003, 10, 14), 23, today=today))
         self.assertFalse(meets_minimum_age(date(2027, 1, 1), 23, today=today))
         self.assertFalse(meets_minimum_age("2000-01-01", 23, today=today))
+
+    def test_student_signup_age_must_be_strictly_under_23(self):
+        today = date(2026, 10, 13)
+        self.assertTrue(is_under_age(date(2003, 10, 14), 23, today=today))
+        self.assertFalse(is_under_age(date(2003, 10, 13), 23, today=today))
+        self.assertFalse(is_under_age(date(2027, 1, 1), 23, today=today))
+        self.assertFalse(is_under_age("2000-01-01", 23, today=today))
 
 
 if __name__ == "__main__":
